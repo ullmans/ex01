@@ -4,7 +4,9 @@ project(ex01 VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_library(ex01 ex01.cpp)
+set(C_STANDARD 99)
+add_compile_options(-Wall -Wextra -pedantic -Werror)
+add_library(ex01 ex01.c)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
