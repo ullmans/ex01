@@ -18,6 +18,7 @@ const char* error_getErrorMessage(ErrorCode code){
     case ERROR_MISSING_MATRIX_VALUES: return "missing values from the matrix";
     case ERROR_NULL_OUTPUT_POINTER: return "try to store info in NULL adress";
     case ERROR_FAILED_MEMORY_ALOCATION: return "couldn't alloctae memory";
+    case ERROR_NEG_WIDTH_OR_HEIGHT: return "negative width or height";
     default: return "";
     }
 }
