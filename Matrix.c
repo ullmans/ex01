@@ -5,7 +5,7 @@
 typedef struct Matrix {
     uint32_t height;
     uint32_t width;
-    int** values;
+    double** values;
 } Matrix;
 
 const uint32_t FIRST_POSSIBLE_VALUE = 0;
