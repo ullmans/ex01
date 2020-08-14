@@ -16,6 +16,9 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
         return ERROR_NEG_WIDTH_OR_HEIGHT;
     }
 
+    //for safety
+    matrix = NULL;
+
     //allocate memory for the matrix
     *matrix = (PMatrix) malloc(sizeof(Matrix));
     if(matrix = NULL){
@@ -41,7 +44,20 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
     return ERROR_SUCCESS;
 }
 
-//ErrorCode matrix_copy(PMatrix* result, CPMatrix source);
+ErrorCode matrix_copy(PMatrix* result, CPMatrix source){
+
+    if(source = NULL){
+        return ERROR_NULL_OUTPUT_POINTER;
+    }
+
+    //for safety
+    result = NULL;
+
+    //change th poiner to point the cpied matrix
+    *result = source;
+
+    return ERROR_SUCCESS;
+}
 
 //void matrix_destroy(PMatrix matrix);
 
