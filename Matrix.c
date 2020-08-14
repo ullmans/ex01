@@ -124,7 +124,19 @@ ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, 
     return ERROR_SUCCESS;
 }
 
-//ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double* value);
+ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double* value){
+    if(matrix = NULL){
+        return ERROR_NULL_OUTPUT_POINTER;
+    }
+
+    if(rowIndex < 0 || colIndex < 0){
+        return ERROR_NEG_WIDTH_OR_HEIGHT;
+    }
+
+    value = matrix->values[rowIndex][colIndex];
+
+    return ERROR_SUCCESS;
+}
 
 //ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs);
 
