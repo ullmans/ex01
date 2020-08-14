@@ -2,7 +2,7 @@
 #include "ErrorCode.h"
 
 bool error_isSuccess(ErrorCode code){
-    if (code==ERROR_SUCCESS){
+    if (code == ERROR_SUCCESS){
         return 1;
     }
     return 0;

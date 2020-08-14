@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "Matrix.h"
 
 typedef struct Matrix {
@@ -28,7 +29,7 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
     (*matrix)->width = width;
 
     //allocate memory for the array of the arrays
-    (*matrix)->values =  (double**)malloc (height * sizeof(double*));
+    (*matrix)->values = (double**) malloc(height * sizeof(double*));
     if((*matrix)->values == NULL){
         free(*matrix);
         return ERROR_FAILED_MEMORY_ALOCATION;
@@ -36,7 +37,7 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
     
     //allocate memory for the arrays insude the array
     for (uint32_t i = 0; i < height; ++i){
-        ((*matrix)->values)[i] = (double*) calloc (width, sizeof(double));
+        ((*matrix)->values)[i] = (double*) calloc(width, sizeof(double));
         if(((*matrix)->values)[i] == NULL){
             for(uint32_t j=0; j < i; ++j){
                 free(((*matrix)->values)[j]);
@@ -46,7 +47,6 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
             return ERROR_FAILED_MEMORY_ALOCATION;
         }
     }
-
     return ERROR_SUCCESS;
 }
 
@@ -61,23 +61,20 @@ ErrorCode matrix_copy(PMatrix* result, CPMatrix source){
 
     matrix_create(result, source->height, source->width);
 
-    for(int i = 0; i < source->height; ++i){
-        for(int j = 0; j< source->width; ++j){
+    for(uint32_t i = 0; i < source->height; ++i){
+        for(uint32_t j = 0; j < source->width; ++j){
             double* newVal = NULL;
             *newVal = matrix_getValue(source, i, j, newVal);
             matrix_setValue(*result, i, j, *newVal);
         }
     }
-
     return ERROR_SUCCESS;
-
-    
 }
 
 void matrix_destroy(PMatrix matrix){
 
     if(matrix == NULL){
-        return ERROR_NULL_POINTER;
+        return;
     }
 
     //free the arrays  of the values
@@ -124,10 +121,6 @@ ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, 
         return ERROR_NULL_POINTER;
     }
 
-    if(rowIndex < 0 || colIndex < 0){
-        return ERROR_NEG_WIDTH_OR_HEIGHT;
-    }
-
     matrix->values[rowIndex][colIndex] = value;
 
     return ERROR_SUCCESS;
@@ -136,10 +129,6 @@ ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, 
 ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double* value){
     if(matrix == NULL){
         return ERROR_NULL_POINTER;
-    }
-
-    if(rowIndex < 0 || colIndex < 0){
-        return ERROR_NEG_WIDTH_OR_HEIGHT;
     }
 
     *value = matrix->values[rowIndex][colIndex];                 //??????value
