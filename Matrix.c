@@ -53,7 +53,7 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
 ErrorCode matrix_copy(PMatrix* result, CPMatrix source){
 
     if(source == NULL){
-        return ERROR_NULL_OUTPUT_POINTER;
+        return ERROR_NULL_POINTER;
     }
 
     //for safety
@@ -77,7 +77,7 @@ ErrorCode matrix_copy(PMatrix* result, CPMatrix source){
 void matrix_destroy(PMatrix matrix){
 
     if(matrix == NULL){
-        return ERROR_NULL_OUTPUT_POINTER;
+        return ERROR_NULL_POINTER;
     }
 
     //free the arrays  of the values
@@ -95,7 +95,7 @@ void matrix_destroy(PMatrix matrix){
 ErrorCode matrix_getHeight(CPMatrix matrix, uint32_t* result){
     
     if(matrix == NULL){
-        return ERROR_NULL_OUTPUT_POINTER;
+        return ERROR_NULL_POINTER;
     }
 
     //for safety
@@ -108,7 +108,7 @@ ErrorCode matrix_getHeight(CPMatrix matrix, uint32_t* result){
 
 ErrorCode matrix_getWidth(CPMatrix matrix, uint32_t* result){
     if(matrix == NULL){
-        return ERROR_NULL_OUTPUT_POINTER;
+        return ERROR_NULL_POINTER;
     }
 
     //for safety
@@ -121,7 +121,7 @@ ErrorCode matrix_getWidth(CPMatrix matrix, uint32_t* result){
 
 ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double value){
     if(matrix == NULL){
-        return ERROR_NULL_OUTPUT_POINTER;
+        return ERROR_NULL_POINTER;
     }
 
     if(rowIndex < 0 || colIndex < 0){
@@ -135,7 +135,7 @@ ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, 
 
 ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double* value){
     if(matrix == NULL){
-        return ERROR_NULL_OUTPUT_POINTER;
+        return ERROR_NULL_POINTER;
     }
 
     if(rowIndex < 0 || colIndex < 0){
@@ -149,7 +149,7 @@ ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex,
 
 ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
     if (lhs == NULL || rhs == NULL){
-        return ERROR_NULL_OUTPUT_POINTER;
+        return ERROR_NULL_POINTER;
     }
 
     //for safety
@@ -174,11 +174,11 @@ ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
 
 ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
     if (lhs == NULL || rhs == NULL){
-        return ERROR_NULL_OUTPUT_POINTER;
+        return ERROR_NULL_POINTER;
     }
 
     if(lhs->width != rhs->height){
-        return ERROR_MISSING_MATRIX_WIDTH;
+        return ERROR_CAN_NOT_MULTI;
     }
 
     //for safety
@@ -205,7 +205,22 @@ ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
     return ERROR_SUCCESS;
 }
 
-//ErrorCode matrix_multiplyWithScalar(PMatrix matrix, double scalar);
+ErrorCode matrix_multiplyWithScalar(PMatrix matrix, double scalar){
+    if(matrix == NULL){
+        return ERROR_NULL_POINTER;
+    }
+
+    for (uint32_t i = 0; i < matrix->height; ++i){
+        for (uint32_t j = 0; j < matrix->width; ++j){
+            double newVal = 0;
+            matrix_getValue(matrix, i, j, &newVal);
+            matrix_setValue(matrix, i, j, newVal * scalar);
+        }
+    }
+
+    return ERROR_SUCCESS;
+
+}
 
 
 
