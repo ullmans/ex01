@@ -59,7 +59,23 @@ ErrorCode matrix_copy(PMatrix* result, CPMatrix source){
     return ERROR_SUCCESS;
 }
 
-//void matrix_destroy(PMatrix matrix);
+void matrix_destroy(PMatrix matrix){
+
+    if(matrix = NULL){
+        return ERROR_NULL_OUTPUT_POINTER;
+    }
+    
+    //free the arrays  of the values
+    for (uint32_t i = 0; i < (matrix->height); ++i){
+        free((matrix->values)[i]);
+    }
+
+    //free the array of the arrays
+    free(matrix->values);
+
+    //free the matrix
+    free(matrix);
+}
 
 //ErrorCode matrix_getHeight(CPMatrix matrix, uint32_t* result);
 
