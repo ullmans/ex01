@@ -159,19 +159,51 @@ ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
     matrix_create(result, lhs->height, lhs->width);
 
     //calculate the values and add them to the new natrix
-    for (int i = 0; i < lhs->width; ++i){
-        for (int j = 0; j < lhs->height; ++j){
-            double* newVal = NULL;
-            *newVal = matrix_getValue(lhs, i, j, newVal);
-            *newVal += matrix_getValue(rhs, i, j, newVal);
-            matrix_setValue(*result, i, j, *newVal);
+    for (uint32_t i = 0; i < lhs->height; ++i){
+        for (uint32_t j = 0; j < rhs->width; ++j){
+            double val1 = 0;
+            double val2 = 0;
+            matrix_getValue(lhs, i, j, &val1);
+            matrix_getValue(rhs, i, j, &val2);
+            matrix_setValue(*result, i, j, val1 + val2);
         }
     }
 
     return ERROR_SUCCESS;
 }
 
-//ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs);
+ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
+    if (lhs == NULL || rhs == NULL){
+        return ERROR_NULL_OUTPUT_POINTER;
+    }
+
+    if(lhs->width != rhs->height){
+        return ERROR_MISSING_MATRIX_WIDTH;
+    }
+
+    //for safety
+    result = NULL;
+
+    //alocate memoty for thr new matrix
+    matrix_create(result, lhs->width, rhs->width);
+
+    for(uint32_t i = 0; i < lhs->width; ++i){
+        for (uint32_t j = 0; j < rhs->height; ++j){
+            ((*result)->values)[i][j] = 0;
+            double calculator = 0;
+            for(uint32_t k = 0; k < lhs->height; ++k){
+                double val1 = 0;
+                double val2 = 0;
+                matrix_getValue(lhs, i, k, &val1);
+                matrix_getValue(rhs, k, j, &val2);
+                calculator += (val1 * val2);
+            }
+            matrix_setValue(*result, i, j, calculator);
+        }
+    }
+
+    return ERROR_SUCCESS;
+}
 
 //ErrorCode matrix_multiplyWithScalar(PMatrix matrix, double scalar);
 
