@@ -30,6 +30,7 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
     //allocate memory for the array of the arrays
     (*matrix)->values =  (double**)malloc (height * sizeof(double*));
     if((*matrix)->values = NULL){
+        free(*matrix);
         return ERROR_FAILED_MEMORY_ALOCATION;
     }
     
@@ -37,6 +38,11 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
     for (uint32_t i = 0; i < height; ++i){
         ((*matrix)->values)[i] = (double*) calloc (width, sizeof(double));
         if(((*matrix)->values)[i] = NULL){
+            for(uint32_t j=0; j < i; ++j){
+                free(((*matrix)->values)[j]);
+            }
+            free((*matrix)->values);
+            free(*matrix);
             return ERROR_FAILED_MEMORY_ALOCATION;
         }
     }
@@ -104,7 +110,19 @@ ErrorCode matrix_getWidth(CPMatrix matrix, uint32_t* result){
     return ERROR_SUCCESS;
 }
 
-//ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double value);
+ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double value){
+    if(matrix = NULL){
+        return ERROR_NULL_OUTPUT_POINTER;
+    }
+
+    if(rowIndex < 0 || colIndex < 0){
+        return ERROR_NEG_WIDTH_OR_HEIGHT;
+    }
+
+    matrix->values[rowIndex][colIndex] = value;
+
+    return ERROR_SUCCESS;
+}
 
 //ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double* value);
 
