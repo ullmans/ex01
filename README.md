@@ -1,3 +1,6 @@
+Ex1- matrix
+===========
+
 the functions of ErrorCode.c:  
 > error_isSuccess  
 > error_getErrorMessage
