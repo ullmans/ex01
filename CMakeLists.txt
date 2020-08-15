@@ -6,7 +6,7 @@ enable_testing()
 
 set(C_STANDARD 99)
 add_compile_options(-Wall -Wextra -pedantic -Werror)
-add_library(ex01 SHARED Matrix.c ErrorCode.c main.c)
+add_executable(matrix test.c Matrix.c ErrorCode.c)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

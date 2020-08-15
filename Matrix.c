@@ -13,18 +13,23 @@ const uint32_t FIRST_POSSIBLE_VALUE = 0;
 
 ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width){
     //check if wisth and height are valid
-    if(width < FIRST_POSSIBLE_VALUE || height < FIRST_POSSIBLE_VALUE){
+    if(width < FIRST_POSSIBLE_VALUE + 1 || height < FIRST_POSSIBLE_VALUE + 1){
         return ERROR_NEG_WIDTH_OR_HEIGHT;
     }
 
-    //for safety
-    matrix = NULL;
+    if(matrix == NULL){
+        return ERROR_NULL_POINTER;
+    }
+
+    *matrix = NULL;
 
     //allocate memory for the matrix
     *matrix = (PMatrix) malloc(sizeof(Matrix));
-    if(matrix == NULL){
+
+    if(*matrix == NULL){
         return ERROR_FAILED_MEMORY_ALOCATION;
     }
+
     (*matrix)->height = height;
     (*matrix)->width = width;
 
@@ -56,16 +61,14 @@ ErrorCode matrix_copy(PMatrix* result, CPMatrix source){
         return ERROR_NULL_POINTER;
     }
 
-    //for safety
-    result = NULL;
-
     matrix_create(result, source->height, source->width);
 
     for(uint32_t i = 0; i < source->height; ++i){
         for(uint32_t j = 0; j < source->width; ++j){
-            double* newVal = NULL;
-            *newVal = matrix_getValue(source, i, j, newVal);
-            matrix_setValue(*result, i, j, *newVal);
+            matrix_setValue(*result, i, j, (source->values)[i][j]);
+            // double* newVal = 0;
+            // matrix_getValue(source, i, j, newVal);
+            // matrix_setValue(*result, i, j, *newVal);
         }
     }
     return ERROR_SUCCESS;
@@ -94,9 +97,6 @@ ErrorCode matrix_getHeight(CPMatrix matrix, uint32_t* result){
     if(matrix == NULL){
         return ERROR_NULL_POINTER;
     }
-
-    //for safety
-    result = NULL;
     
     *result = matrix->height;
 
@@ -107,9 +107,6 @@ ErrorCode matrix_getWidth(CPMatrix matrix, uint32_t* result){
     if(matrix == NULL){
         return ERROR_NULL_POINTER;
     }
-
-    //for safety
-    result = NULL;
     
     *result = matrix->width;
 
@@ -127,22 +124,40 @@ ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, 
 }
 
 ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double* value){
+    
+    //check for errors
     if(matrix == NULL){
+        //printf("matrix_getValue_1\n");
         return ERROR_NULL_POINTER;
     }
 
-    *value = matrix->values[rowIndex][colIndex];                 //??????value
+    if(rowIndex < FIRST_POSSIBLE_VALUE || colIndex < FIRST_POSSIBLE_VALUE){
+        //printf("matrix_getValue_2\n");
+        return ERROR_NEG_WIDTH_OR_HEIGHT;
+    }
 
+    if(value == NULL){
+        //printf("matrix_getValue_3\n");
+        return ERROR_NULL_POINTER;
+    }
+
+    for(uint32_t i = 0; i < matrix->height; ++i){
+        if(matrix->values[i] == NULL){
+            //printf("matrix_getValue_4\n");
+            return ERROR_NULL_POINTER;
+        }
+    }
+
+    *value = (matrix->values)[rowIndex][colIndex];
+    //printf("matrix_getValue_5\n");
     return ERROR_SUCCESS;
 }
 
 ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
     if (lhs == NULL || rhs == NULL){
+        //printf("matrix_add_1\n");
         return ERROR_NULL_POINTER;
     }
-
-    //for safety
-    result = NULL;
 
     //alocate memoty for thr new matrix
     matrix_create(result, lhs->height, lhs->width);
@@ -150,47 +165,49 @@ ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
     //calculate the values and add them to the new natrix
     for (uint32_t i = 0; i < lhs->height; ++i){
         for (uint32_t j = 0; j < rhs->width; ++j){
-            double val1 = 0;
-            double val2 = 0;
-            matrix_getValue(lhs, i, j, &val1);
-            matrix_getValue(rhs, i, j, &val2);
-            matrix_setValue(*result, i, j, val1 + val2);
+            matrix_setValue(*result, i, j, lhs->values[i][j] + rhs->values[i][j]);
         }
     }
-
+    //printf("matrix_add_3\n");
     return ERROR_SUCCESS;
 }
 
 ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs){
     if (lhs == NULL || rhs == NULL){
+        //printf("matrix_multiplyMatrices_1\n");
         return ERROR_NULL_POINTER;
     }
 
     if(lhs->width != rhs->height){
+         //printf("matrix_multiplyMatrices_2\n");
         return ERROR_CAN_NOT_MULTI;
     }
 
-    //for safety
-    result = NULL;
-
     //alocate memoty for thr new matrix
-    matrix_create(result, lhs->width, rhs->width);
+    matrix_create(result, lhs->height, rhs->width);
 
-    for(uint32_t i = 0; i < lhs->width; ++i){
-        for (uint32_t j = 0; j < rhs->height; ++j){
-            ((*result)->values)[i][j] = 0;
+    if(result == NULL){
+        //printf("matrix_multiplyMatrices_3\n");
+        return ERROR_NULL_POINTER;
+    }
+
+    for(uint32_t i = 0; i < (*result)->height; ++i){
+        //printf("aaaaaa\n");
+        for (uint32_t j = 0; j < (*result)->width; ++j){
+            //printf("bbbbb\n");
             double calculator = 0;
-            for(uint32_t k = 0; k < lhs->height; ++k){
-                double val1 = 0;
-                double val2 = 0;
-                matrix_getValue(lhs, i, k, &val1);
-                matrix_getValue(rhs, k, j, &val2);
-                calculator += (val1 * val2);
+            for(uint32_t k = 0; k < lhs->width; ++k){
+                calculator += lhs->values[i][k] * rhs->values[k][j];
+                // double val1;
+                // double val2;
+                // matrix_getValue(lhs, i, k, &val1);
+                // matrix_getValue(rhs, k, j, &val2);
+                // calculator += (val1 * val2);
             }
             matrix_setValue(*result, i, j, calculator);
         }
     }
-
+    //printf("matrix_multiplyMatrices_5");
     return ERROR_SUCCESS;
 }
 
