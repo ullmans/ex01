@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#cmake auto generated file
+build/
+
+#VScode auto generated file
+.VScode/
