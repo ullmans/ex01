@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include "ErrorCode.h"
 
-bool error_isSuccess(ErrorCode code){
+bool error_isSuccess(const ErrorCode code){
     return code == ERROR_SUCCESS;
 }
 
-const char* error_getErrorMessage(ErrorCode code){
+const char* error_getErrorMessage(const ErrorCode code){
     switch (code)
     {
     case ERROR_SUCCESS: return "the operation has promoted successfully";
